@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://t2bqjnat5126"]
+
+[ext_resource type="Script" uid="uid://ctvebip8r50gg" path="res://camera_3d.gd" id="1_h2yge"]
+[ext_resource type="Script" uid="uid://df502cpx5ctol" path="res://cable_path.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://dx7nhbdkn7krt" path="res://rider.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://xw0s6x5ipv25" path="res://ui.gd" id="4_1bvp3"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7dm0k"]
+size = Vector2(600, 250)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_color = Color(0.24780053, 0.76737565, 0.7021107, 1)
+metallic = 0.1
+roughness = 0.2
+
+[sub_resource type="Curve3D" id="Curve3D_0xm2m"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
+
+[node name="Main" type="Node3D" unique_id=2015630341]
+
+[node name="Water" type="MeshInstance3D" parent="." unique_id=879732229]
+mesh = SubResource("PlaneMesh_7dm0k")
+surface_material_override/0 = SubResource("StandardMaterial3D_1bvp3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=495578419]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1324086548]
+transform = Transform3D(1, 0, 0, 0, 0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, 0, 5, 15)
+script = ExtResource("1_h2yge")
+
+[node name="CablePath" type="Path3D" parent="." unique_id=1006253599]
+curve = SubResource("Curve3D_0xm2m")
+script = ExtResource("1_ig7tw")
+
+[node name="Rider" type="PathFollow3D" parent="CablePath" unique_id=570619638]
+script = ExtResource("2_0xm2m")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CablePath/Rider" unique_id=1584671086]
+mesh = SubResource("BoxMesh_ig7tw")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1988012542]
+script = ExtResource("4_1bvp3")
+
+[node name="TrickLabel" type="Label" parent="UI" unique_id=1720090612]
+offset_left = 400.0
+offset_top = 250.0
+offset_right = 488.0
+offset_bottom = 273.0
+text = "Trick Name"
+
+[node name="ScoreLabel" type="Label" parent="UI" unique_id=1827391799]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 60.0
+offset_bottom = 43.0
+text = "Score 0"
