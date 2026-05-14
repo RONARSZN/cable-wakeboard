@@ -48,15 +48,8 @@ func _process(delta):
 			vertical_offset = 0.0
 			jump_velocity = 0.0
 			is_jumping = false
-			
-			# Check if trick was performed
-			if last_trick == "":
-				# Crashed - no trick performed
-				var ui = get_node("/root/Main/UI")
-				ui.crash()
-			else:
-				last_trick = ""
-				last_trick_points = 0
+			last_trick = ""
+			last_trick_points = 0
 			
 	# Trick rotation animation
 	if is_animating:

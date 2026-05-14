@@ -51,13 +51,18 @@ $requiredRiderTerms = @(
 	"_check_obstacle_interactions",
 	"_hit_kicker",
 	"_hit_grind_obstacle",
-	"show_obstacle"
+	"show_obstacle",
+	"last_trick = `""
 )
 
 foreach ($term in $requiredRiderTerms) {
 	if ($rider -notmatch [regex]::Escape($term)) {
 		throw "Missing rider term: $term"
 	}
+}
+
+if ($rider -match [regex]::Escape("no trick performed")) {
+	throw "Landing without a trick should not be treated as a crash."
 }
 
 $uiPath = Join-Path $ProjectRoot "ui.gd"
