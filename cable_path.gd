@@ -25,28 +25,89 @@ func _ready():
 	# Give the finished curve to the CablePath node.
 	self.curve = new_curve
 
+	_add_environment(points)
 	_add_obstacles()
 
-func _add_obstacles():
-	# Basic ramp on the right straight.
-	# Place it directly on the same segment the rider follows.
-	var ramp = MeshInstance3D.new()
-	var ramp_mesh = PrismMesh.new()
-	ramp_mesh.size = Vector3(8, 1.5, 14)
-	ramp.mesh = ramp_mesh
-	ramp.position = _point_between(Vector3(127, 0, -52), Vector3(113, 0, 71), 0.58) + Vector3(0, 0.75, 0)
-	ramp.rotation.y = _path_angle(Vector3(127, 0, -52), Vector3(113, 0, 71))
-	get_parent().call_deferred("add_child", ramp)
+func _add_environment(points: Array):
+	var environment_parent = Node3D.new()
+	environment_parent.name = "CableParkMarkers"
+	var course_center = _average_point(points)
 
-	# Basic rail on the left straight.
-	# Keep it centered on the rider path instead of guessing world coordinates.
-	var rail = MeshInstance3D.new()
-	var rail_mesh = BoxMesh.new()
-	rail_mesh.size = Vector3(1, 0.5, 18)
-	rail.mesh = rail_mesh
-	rail.position = _point_between(Vector3(0, 0, 108), Vector3(-127, 0, -52), 0.6) + Vector3(0, 0.5, 0)
-	rail.rotation.y = _path_angle(Vector3(0, 0, 108), Vector3(-127, 0, -52))
-	get_parent().call_deferred("add_child", rail)
+	for index in range(points.size()):
+		var cable_point = points[index]
+		var tower = _create_tower_for_index(index)
+		tower.position = _tower_base_position(cable_point, course_center)
+		tower.look_at_from_position(tower.position, cable_point, Vector3.UP)
+		environment_parent.add_child(tower)
+
+		var marker = EnvironmentFactory.create_course_marker("Marker" + str(index + 1))
+		marker.position = _marker_position(cable_point, course_center)
+		environment_parent.add_child(marker)
+
+	get_parent().call_deferred("add_child", environment_parent)
+
+func _create_tower_for_index(index: int) -> Node3D:
+	if index == 0:
+		return EnvironmentFactory.create_engine_tower("EngineTower")
+	return EnvironmentFactory.create_corner_tower("Tower" + str(index + 1))
+
+func _tower_base_position(cable_point: Vector3, course_center: Vector3) -> Vector3:
+	return cable_point + _outward_from_center(cable_point, course_center) * 16.0
+
+func _marker_position(cable_point: Vector3, course_center: Vector3) -> Vector3:
+	return cable_point + _outward_from_center(cable_point, course_center) * 4.0 + Vector3(0, 0.35, 0)
+
+func _average_point(points: Array) -> Vector3:
+	var total = Vector3.ZERO
+	for point in points:
+		total += point
+	return total / points.size()
+
+func _outward_from_center(point: Vector3, center: Vector3) -> Vector3:
+	var outward = point - center
+	outward.y = 0.0
+	return outward.normalized()
+
+func _add_obstacles():
+	var obstacle_parent = Node3D.new()
+	obstacle_parent.name = "Obstacles"
+
+	_place_obstacle_on_segment(
+		obstacle_parent,
+		ObstacleFactory.create_kicker(),
+		Vector3(127, 0, -52),
+		Vector3(113, 0, 71),
+		0.58
+	)
+
+	_place_obstacle_on_segment(
+		obstacle_parent,
+		ObstacleFactory.create_flat_box(),
+		Vector3(113, 0, 71),
+		Vector3(0, 0, 108),
+		0.42
+	)
+
+	_place_obstacle_on_segment(
+		obstacle_parent,
+		ObstacleFactory.create_pipe_rail(),
+		Vector3(0, 0, 108),
+		Vector3(-127, 0, -52),
+		0.6
+	)
+
+	get_parent().call_deferred("add_child", obstacle_parent)
+
+func _place_obstacle_on_segment(
+	parent: Node3D,
+	obstacle: Node3D,
+	start: Vector3,
+	end: Vector3,
+	amount: float
+):
+	obstacle.position = _point_between(start, end, amount)
+	obstacle.rotation.y = _path_angle(start, end)
+	parent.add_child(obstacle)
 
 func _point_between(start: Vector3, end: Vector3, amount: float) -> Vector3:
 	return start.lerp(end, amount)

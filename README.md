@@ -2,7 +2,7 @@
 
 A small Godot 4 prototype for a cable wakeboarding game.
 
-The rider follows a full-size cable park path, the camera uses a third-person chase view and the current prototype supports jumping, simple trick inputs, scoring and crash resets.
+The rider follows a full-size cable park path, the camera uses a third-person chase view and the current prototype supports jumping, simple trick inputs, obstacle interactions, scoring and crash resets.
 
 ## Project
 
@@ -38,12 +38,12 @@ This is an early prototype. The core loop is simple:
 2. The player jumps.
 3. The player performs a trick before landing.
 4. The score increases if a trick is completed.
-5. The score resets if the rider lands without a trick.
+5. Kickers launch the rider, while boxes and rails reward low airborne timing.
+6. The score resets if the rider misses timing or lands without a trick.
 
 ## Next Ideas
 
 - Add proper wakeboarder and obstacle visuals.
-- Add collision detection for ramps and rails.
 - Tune jump timing and trick scoring.
 - Add sound, water feedback and stronger camera polish.
 - Add mobile UI prompts for touch controls.

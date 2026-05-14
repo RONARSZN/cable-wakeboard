@@ -20,6 +20,15 @@ func show_trick(trick_name: String, points: int):
 	$ScoreLabel.text = "Score: " + str(score)
 	trick_display_timer = trick_display_duration
 
+func show_obstacle(message: String, points: int):
+	score += points
+	if points > 0:
+		$TrickLabel.text = message + "\n+" + str(points)
+	else:
+		$TrickLabel.text = message
+	$ScoreLabel.text = "Score: " + str(score)
+	trick_display_timer = trick_display_duration
+
 func crash():
 	score = 0
 	$ScoreLabel.text = "Score: 0"
