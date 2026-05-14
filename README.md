@@ -23,10 +23,14 @@ The rider follows a full-size cable park path, the camera uses a third-person ch
 ## Controls
 
 - `Space`: jump
-- `Left Arrow`: heelside 180 while jumping
-- `Right Arrow`: toeside 180 while jumping
-- `Up Arrow`: backroll while jumping
-- `Down Arrow`: front roll while jumping
+- Hold `A`: edge left toward an obstacle lane
+- Hold `D`: edge right toward an obstacle lane
+- Hold `Left Arrow`: heelside spin while jumping
+- Hold `Right Arrow`: toeside spin while jumping
+- Hold `Up Arrow`: backroll while jumping
+- Hold `Down Arrow`: front roll while jumping
+
+Left and right spin keys use hold duration. Release after enough rotation for a 180, or keep holding for a full 360. Spin and flip keys must be held long enough. Releasing too early under-rotates the trick.
 
 On touch screens, tap to jump and swipe to trigger a trick.
 
@@ -36,10 +40,12 @@ This is an early prototype. The core loop is simple:
 
 1. The rider loops around the cable path.
 2. The player jumps.
-3. The player performs a trick before landing.
-4. The score increases if a trick is completed.
-5. Kickers launch the rider, while boxes and rails reward low airborne timing.
-6. The score resets if the rider misses timing or lands without a trick.
+3. The player chooses whether to edge toward an obstacle lane.
+4. The player performs a trick before landing.
+5. The score increases if a trick is completed.
+6. Kickers launch the rider, while boxes and rails reward low airborne timing.
+7. Boxes and rails briefly carry the rider when the approach and timing connect.
+8. The score resets if the rider misses timing or lands without a trick.
 
 ## Next Ideas
 

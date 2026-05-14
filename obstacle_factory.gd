@@ -3,7 +3,8 @@ class_name ObstacleFactory
 const WATERLINE_Y = 0.0
 
 static func create_kicker() -> Node3D:
-	var obstacle = _create_obstacle_root("Kicker", "kicker", 4.2, 0)
+	var obstacle = _create_obstacle_root("Kicker", "kicker", 11.5, 0)
+	obstacle.set_meta("ride_height", 1.45)
 	var ramp_mesh = PrismMesh.new()
 	ramp_mesh.size = Vector3(5.0, 1.4, 7.0)
 	var ramp = _create_mesh("Ramp", ramp_mesh, Color(0.95, 0.83, 0.28))
@@ -18,7 +19,8 @@ static func create_kicker() -> Node3D:
 	return obstacle
 
 static func create_flat_box() -> Node3D:
-	var obstacle = _create_obstacle_root("FlatBox", "grind", 3.5, 150)
+	var obstacle = _create_obstacle_root("FlatBox", "grind", 12.0, 150)
+	obstacle.set_meta("ride_height", 0.92)
 	var box_mesh = BoxMesh.new()
 	box_mesh.size = Vector3(4.0, 0.8, 12.0)
 	var box = _create_mesh("RideSurface", box_mesh, Color(0.95, 0.83, 0.28))
@@ -33,7 +35,8 @@ static func create_flat_box() -> Node3D:
 	return obstacle
 
 static func create_pipe_rail() -> Node3D:
-	var obstacle = _create_obstacle_root("PipeRail", "grind", 3.0, 250)
+	var obstacle = _create_obstacle_root("PipeRail", "grind", 10.5, 250)
+	obstacle.set_meta("ride_height", 0.95)
 	var rail_mesh = CylinderMesh.new()
 	rail_mesh.top_radius = 0.18
 	rail_mesh.bottom_radius = 0.18

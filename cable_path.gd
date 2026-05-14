@@ -83,7 +83,8 @@ func _add_obstacles():
 		ObstacleFactory.create_kicker(),
 		Vector3(127, 0, -52),
 		Vector3(113, 0, 71),
-		0.58
+		0.58,
+		9.0
 	)
 
 	_place_obstacle_on_segment(
@@ -91,7 +92,8 @@ func _add_obstacles():
 		ObstacleFactory.create_flat_box(),
 		Vector3(113, 0, 71),
 		Vector3(0, 0, 108),
-		0.42
+		0.42,
+		-10.0
 	)
 
 	_place_obstacle_on_segment(
@@ -99,7 +101,8 @@ func _add_obstacles():
 		ObstacleFactory.create_pipe_rail(),
 		Vector3(0, 0, 108),
 		Vector3(-127, 0, -52),
-		0.6
+		0.6,
+		8.0
 	)
 
 	get_parent().call_deferred("add_child", obstacle_parent)
@@ -109,9 +112,10 @@ func _place_obstacle_on_segment(
 	obstacle: Node3D,
 	start: Vector3,
 	end: Vector3,
-	amount: float
+	amount: float,
+	lateral_offset: float
 ):
-	obstacle.position = _point_between(start, end, amount)
+	obstacle.position = _point_between(start, end, amount) + _side_offset(start, end, lateral_offset)
 	obstacle.rotation.y = _path_angle(start, end)
 	parent.add_child(obstacle)
 
@@ -121,3 +125,7 @@ func _point_between(start: Vector3, end: Vector3, amount: float) -> Vector3:
 func _path_angle(start: Vector3, end: Vector3) -> float:
 	var direction = end - start
 	return atan2(direction.x, direction.z)
+
+func _side_offset(start: Vector3, end: Vector3, amount: float) -> Vector3:
+	var direction = (end - start).normalized()
+	return Vector3(direction.z, 0.0, -direction.x) * amount
