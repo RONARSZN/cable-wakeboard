@@ -32,6 +32,8 @@ $requiredPathTerms = @(
 	"ObstacleFactory.create_kicker",
 	"ObstacleFactory.create_flat_box",
 	"ObstacleFactory.create_pipe_rail",
+	"preload(`"res://scenery_factory.gd`")",
+	"SceneryFactoryScript.create_wakepark_scene",
 	"_place_obstacle_on_segment",
 	"_tower_base_position",
 	"EnvironmentFactory.create_engine_tower",
@@ -67,6 +69,8 @@ if ($rider -match [regex]::Escape("no trick performed")) {
 
 $uiPath = Join-Path $ProjectRoot "ui.gd"
 $ui = Get-Content -Raw -Path $uiPath
+$scenePath = Join-Path $ProjectRoot "main.tscn"
+$scene = Get-Content -Raw -Path $scenePath
 
 if ($ui -notmatch [regex]::Escape("func show_obstacle")) {
 	throw "Missing UI obstacle display handler."
@@ -87,6 +91,34 @@ foreach ($term in $requiredEnvironmentTerms) {
 	if ($environment -notmatch [regex]::Escape($term)) {
 		throw "Missing environment term: $term"
 	}
+}
+
+$sceneryPath = Join-Path $ProjectRoot "scenery_factory.gd"
+$scenery = Get-Content -Raw -Path $sceneryPath
+
+$requiredSceneryTerms = @(
+	"class_name SceneryFactory",
+	"create_wakepark_scene",
+	"MIN_WATER_CLEARANCE = 75.0",
+	"CentralIsland",
+	"Vector3(0.0, 0.02, 154.0)",
+	"Vector3(8.0, 0.02, -147.0)",
+	"Vector3(176.0, 0.02, 8.0)",
+	"Vector3(184.0, 0.0",
+	"LakeHut",
+	"EventCanopy",
+	"DistantMountainLine",
+	"WindTurbine"
+)
+
+foreach ($term in $requiredSceneryTerms) {
+	if ($scenery -notmatch [regex]::Escape($term)) {
+		throw "Missing scenery term: $term"
+	}
+}
+
+if ($scene -notmatch [regex]::Escape("size = Vector2(600, 410)")) {
+	throw "Water plane should be large enough for the expanded wakepark spacing."
 }
 
 "Obstacle setup source check passed."

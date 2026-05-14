@@ -1,5 +1,7 @@
 extends Path3D
 
+const SceneryFactoryScript = preload("res://scenery_factory.gd")
+
 func _ready():
 	var new_curve = Curve3D.new()
 
@@ -25,8 +27,12 @@ func _ready():
 	# Give the finished curve to the CablePath node.
 	self.curve = new_curve
 
+	_add_scenery(points)
 	_add_environment(points)
 	_add_obstacles()
+
+func _add_scenery(points: Array):
+	get_parent().call_deferred("add_child", SceneryFactoryScript.create_wakepark_scene(points))
 
 func _add_environment(points: Array):
 	var environment_parent = Node3D.new()
