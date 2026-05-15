@@ -17,6 +17,18 @@ roughness = 0.2
 
 [sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
+sky_top_color = Color(0.3491902, 0.58383155, 0.85430586, 1)
+sky_horizon_color = Color(0.7977378, 0.9063318, 0.95468724, 1)
+ground_bottom_color = Color(0.24780053, 0.76737565, 0.7014107, 1)
+
+[sub_resource type="Sky" id="Sky_lquwl"]
+sky_material = SubResource("ProceduralSkyMaterial_1bvp3")
+
+[sub_resource type="Environment" id="Environment_7mycd"]
+background_mode = 2
+sky = SubResource("Sky_lquwl")
+
 [node name="Main" type="Node3D" unique_id=2015630341]
 
 [node name="Water" type="MeshInstance3D" parent="." unique_id=879732229]
@@ -56,3 +68,6 @@ offset_top = 20.0
 offset_right = 60.0
 offset_bottom = 43.0
 text = "Score 0"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1645808874]
+environment = SubResource("Environment_7mycd")
