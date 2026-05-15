@@ -45,6 +45,8 @@ var active_trick_name = ""
 var active_trick_points = 0
 var target_rotation_amount = 0.0
 var active_spin_side = ""
+var base_stance_yaw = 90.0
+var stance_yaw = 90.0
 var visual_root: Node3D
 var grind_pose_timer = 0.0
 var grind_pose_duration = 1.0
@@ -65,9 +67,9 @@ func _ready():
 	_apply_ride_pose()
 
 func _process(delta):
-	progress_ratio -= speed * delta
-	if progress_ratio <= 0.0:
-		progress_ratio = 1.0
+	progress_ratio += speed * delta
+	if progress_ratio >= 1.0:
+		progress_ratio = 0.0
 	_update_lane_offset(delta)
 	_update_obstacle_cooldowns(delta)
 	
@@ -217,19 +219,19 @@ func _update_pose(delta: float):
 		_apply_ride_pose()
 
 func _apply_ride_pose():
-	visual_root.rotation_degrees = Vector3(-3.0, 0.0, 0.0)
+	visual_root.rotation_degrees = Vector3(-3.0, stance_yaw, 0.0)
 	_set_body_pose(-6.0, 0.0)
 
 func _apply_edge_pose():
-	visual_root.rotation_degrees = Vector3(-7.0, 0.0, -13.0)
+	visual_root.rotation_degrees = Vector3(-7.0, stance_yaw, -13.0)
 	_set_body_pose(-14.0, -8.0)
 
 func _apply_pop_pose():
-	visual_root.rotation_degrees = Vector3(-10.0, 0.0, -12.0)
+	visual_root.rotation_degrees = Vector3(-10.0, stance_yaw, -12.0)
 	_set_body_pose(-18.0, -15.0)
 
 func _apply_grind_pose():
-	visual_root.rotation_degrees = Vector3(-18.0, 0.0, -28.0)
+	visual_root.rotation_degrees = Vector3(-18.0, stance_yaw, -28.0)
 	_set_body_pose(-36.0, -22.0)
 
 func _set_body_pose(body_x: float, body_z: float):
@@ -251,12 +253,12 @@ func _is_approaching_obstacle() -> bool:
 
 func _apply_trick_rotation(rotation_amount: float):
 	if trick_rotation_axis == "y":
-		visual_root.rotation_degrees.y = rotation_amount
+		visual_root.rotation_degrees.y = stance_yaw + rotation_amount
 	elif trick_rotation_axis == "x":
 		visual_root.rotation_degrees.x = rotation_amount
 
 func _clear_trick_rotation():
-	visual_root.rotation_degrees.y = 0.0
+	visual_root.rotation_degrees.y = stance_yaw
 	_apply_ride_pose()
 
 func _finish_trick_rotation(completed: bool):
@@ -266,8 +268,12 @@ func _finish_trick_rotation(completed: bool):
 	is_animating = false
 	if completed:
 		if active_spin_side != "":
-			active_trick_name = _spin_name_for_degrees(active_spin_side, 360)
-			active_trick_points = 500
+			var degrees = 360
+			if abs(current_rotation) < 300.0:
+				degrees = 180
+			_set_stance_yaw(degrees)
+			active_trick_name = _spin_name_for_degrees(active_spin_side, degrees)
+			active_trick_points = _spin_points_for_degrees(degrees)
 		last_trick = active_trick_name
 		last_trick_points = active_trick_points
 		var ui = get_node("/root/Main/UI")
@@ -311,8 +317,6 @@ func _finish_spin_key(side: String):
 	if finished_degrees >= 300.0:
 		_finish_trick_rotation(true)
 	elif finished_degrees >= 140.0 and trick_hold_time >= spin_180_hold_time:
-		active_trick_name = _spin_name_for_degrees(side, 180)
-		active_trick_points = 100
 		_finish_trick_rotation(true)
 	else:
 		_finish_trick_rotation(false)
@@ -321,6 +325,17 @@ func _spin_name_for_degrees(side: String, degrees: int) -> String:
 	if side == "left":
 		return "Heelside " + str(degrees)
 	return "Toeside " + str(degrees)
+
+func _spin_points_for_degrees(degrees: int) -> int:
+	if degrees >= 360:
+		return 500
+	return 100
+
+func _set_stance_yaw(degrees: int):
+	if degrees == 180:
+		stance_yaw = wrapf(stance_yaw + 180.0, 0.0, 360.0)
+	elif degrees >= 360:
+		stance_yaw = base_stance_yaw
 
 func detect_trick(swipe: Vector2):
 	if not is_jumping:
@@ -380,9 +395,9 @@ func _input(event):
 			if event.keycode == KEY_SPACE:
 				jump()
 			elif event.keycode == KEY_A:
-				_set_approach_axis(-1)
-			elif event.keycode == KEY_D:
 				_set_approach_axis(1)
+			elif event.keycode == KEY_D:
+				_set_approach_axis(-1)
 			elif event.keycode == KEY_LEFT:
 				_start_spin_key("left")
 			elif event.keycode == KEY_RIGHT:
@@ -392,9 +407,9 @@ func _input(event):
 			elif event.keycode == KEY_DOWN:
 				apply_trick("down")
 		else:
-			if event.keycode == KEY_A and approach_axis < 0:
+			if event.keycode == KEY_A and approach_axis > 0:
 				_set_approach_axis(0)
-			elif event.keycode == KEY_D and approach_axis > 0:
+			elif event.keycode == KEY_D and approach_axis < 0:
 				_set_approach_axis(0)
 			elif event.keycode == KEY_LEFT:
 				_finish_spin_key("left")

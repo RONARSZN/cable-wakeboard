@@ -4,6 +4,30 @@ const STEEL_COLOR = Color(0.78, 0.82, 0.82)
 const DARK_STEEL_COLOR = Color(0.06, 0.06, 0.06)
 const WARNING_COLOR = Color(1.0, 0.16, 0.08)
 
+static func create_daytime_world_environment() -> WorldEnvironment:
+	var sky_material = ProceduralSkyMaterial.new()
+	sky_material.sky_top_color = Color(0.26, 0.57, 1.0)
+	sky_material.sky_horizon_color = Color(0.92, 0.97, 1.0)
+	sky_material.ground_bottom_color = Color(0.32, 0.46, 0.34)
+	sky_material.ground_horizon_color = Color(0.92, 0.97, 1.0)
+	sky_material.energy_multiplier = 1.1
+	sky_material.sun_angle_max = 32.0
+	sky_material.sun_curve = 0.08
+
+	var sky = Sky.new()
+	sky.sky_material = sky_material
+
+	var environment = Environment.new()
+	environment.background_mode = Environment.BG_SKY
+	environment.sky = sky
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	environment.ambient_light_energy = 0.85
+
+	var world_environment = WorldEnvironment.new()
+	world_environment.name = "WorldEnvironment"
+	world_environment.environment = environment
+	return world_environment
+
 static func create_engine_tower(tower_name: String) -> Node3D:
 	var tower = Node3D.new()
 	tower.name = tower_name

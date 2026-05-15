@@ -6,14 +6,14 @@ func _ready():
 	var new_curve = Curve3D.new()
 
 	# 1 Godot unit = 1 meter.
-	# These 5 points create a Deca-style full-size cable layout.
-	# The full lap is close to 718 meters.
+	# These 5 points create a course-layout style cable park.
+	# The full lap is close to 1,560 meters.
 	var points = [
-		Vector3(0, 0, -99),     # Back tower
-		Vector3(127, 0, -52),   # Right back tower
-		Vector3(113, 0, 71),    # Right front tower
-		Vector3(0, 0, 108),     # Front tower
-		Vector3(-127, 0, -52),  # Left tower
+		Vector3(-260, 0, -108),  # Tower 1
+		Vector3(-330, 0, -18),   # Tower 2
+		Vector3(-252, 0, 118),   # Tower 3
+		Vector3(292, 0, 116),    # Tower 4
+		Vector3(318, 0, -112),   # Tower 5
 	]
 
 	# Add each tower point to the cable path.
@@ -27,9 +27,10 @@ func _ready():
 	# Give the finished curve to the CablePath node.
 	self.curve = new_curve
 
+	get_parent().call_deferred("add_child", EnvironmentFactory.create_daytime_world_environment())
 	_add_scenery(points)
 	_add_environment(points)
-	_add_obstacles()
+	_add_air_trick_markers()
 
 func _add_scenery(points: Array):
 	get_parent().call_deferred("add_child", SceneryFactoryScript.create_wakepark_scene(points))
@@ -74,39 +75,6 @@ func _outward_from_center(point: Vector3, center: Vector3) -> Vector3:
 	outward.y = 0.0
 	return outward.normalized()
 
-func _add_obstacles():
-	var obstacle_parent = Node3D.new()
-	obstacle_parent.name = "Obstacles"
-
-	_place_obstacle_on_segment(
-		obstacle_parent,
-		ObstacleFactory.create_kicker(),
-		Vector3(127, 0, -52),
-		Vector3(113, 0, 71),
-		0.58,
-		9.0
-	)
-
-	_place_obstacle_on_segment(
-		obstacle_parent,
-		ObstacleFactory.create_flat_box(),
-		Vector3(113, 0, 71),
-		Vector3(0, 0, 108),
-		0.42,
-		-10.0
-	)
-
-	_place_obstacle_on_segment(
-		obstacle_parent,
-		ObstacleFactory.create_pipe_rail(),
-		Vector3(0, 0, 108),
-		Vector3(-127, 0, -52),
-		0.6,
-		8.0
-	)
-
-	get_parent().call_deferred("add_child", obstacle_parent)
-
 func _place_obstacle_on_segment(
 	parent: Node3D,
 	obstacle: Node3D,
@@ -129,3 +97,14 @@ func _path_angle(start: Vector3, end: Vector3) -> float:
 func _side_offset(start: Vector3, end: Vector3, amount: float) -> Vector3:
 	var direction = (end - start).normalized()
 	return Vector3(direction.z, 0.0, -direction.x) * amount
+
+func _add_air_trick_markers():
+	var marker_parent = Node3D.new()
+	marker_parent.name = "AirTrickSections"
+
+	for index in range(3):
+		var marker = EnvironmentFactory.create_course_marker("AirTrickMarker" + str(index + 1))
+		marker.position = Vector3(252.0 + index * 22.0, 0.35, -52.0 + index * 62.0)
+		marker_parent.add_child(marker)
+
+	get_parent().call_deferred("add_child", marker_parent)

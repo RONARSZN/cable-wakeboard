@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://xw0s6x5ipv25" path="res://ui.gd" id="4_1bvp3"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7dm0k"]
-size = Vector2(600, 410)
+size = Vector2(900, 620)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
 albedo_color = Color(0.24780053, 0.76737565, 0.7021107, 1)

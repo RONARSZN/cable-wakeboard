@@ -17,14 +17,14 @@ static func create_wakepark_scene(points: Array) -> Node3D:
 	scene.name = "WakeparkScenery"
 	var center = _average_point(points)
 
-	scene.add_child(_create_box("OuterGround", Vector3(700.0, 0.08, 430.0), Vector3(0.0, -0.08, 0.0), DRY_GRASS_COLOR))
-	scene.add_child(_create_box("CentralIsland", Vector3(132.0, 0.24, 66.0), center + Vector3(0.0, 0.04, 8.0), GRASS_COLOR))
-	scene.add_child(_create_round_land_cap("IslandFrontCap", center + Vector3(0.0, 0.06, 41.0), 33.0))
-	scene.add_child(_create_round_land_cap("IslandBackCap", center + Vector3(0.0, 0.06, -25.0), 33.0))
-	scene.add_child(_create_shoreline_band("FrontSandBank", Vector3(230.0, 0.1, 18.0), Vector3(0.0, 0.02, 154.0)))
-	scene.add_child(_create_shoreline_band("BackSandBank", Vector3(250.0, 0.1, 18.0), Vector3(8.0, 0.02, -147.0)))
-	scene.add_child(_create_shoreline_band("RightServiceBank", Vector3(22.0, 0.1, 220.0), Vector3(176.0, 0.02, 8.0)))
-	scene.add_child(_create_shoreline_band("LeftGrassBank", Vector3(18.0, 0.1, 170.0), Vector3(-160.0, 0.02, -4.0)))
+	scene.add_child(_create_box("OuterGround", Vector3(980.0, 0.08, 650.0), Vector3(0.0, -0.08, 0.0), DRY_GRASS_COLOR))
+	scene.add_child(_create_box("CentralIsland", Vector3(500.0, 0.24, 118.0), Vector3(12.0, 0.04, 8.0), GRASS_COLOR))
+	scene.add_child(_create_round_land_cap("IslandFrontCap", Vector3(262.0, 0.06, 8.0), 58.0))
+	scene.add_child(_create_round_land_cap("IslandBackCap", Vector3(-238.0, 0.06, 8.0), 58.0))
+	scene.add_child(_create_shoreline_band("FrontSandBank", Vector3(680.0, 0.1, 22.0), Vector3(0.0, 0.02, 252.0)))
+	scene.add_child(_create_shoreline_band("BackSandBank", Vector3(700.0, 0.1, 22.0), Vector3(8.0, 0.02, -220.0)))
+	scene.add_child(_create_shoreline_band("RightServiceBank", Vector3(24.0, 0.1, 430.0), Vector3(356.0, 0.02, 8.0)))
+	scene.add_child(_create_shoreline_band("LeftGrassBank", Vector3(22.0, 0.1, 360.0), Vector3(-374.0, 0.02, -4.0)))
 
 	_add_hut_row(scene)
 	_add_event_canopy(scene)
@@ -36,14 +36,14 @@ static func create_wakepark_scene(points: Array) -> Node3D:
 static func _add_hut_row(scene: Node3D):
 	for index in range(5):
 		var hut = _create_hut("LakeHut" + str(index + 1))
-		hut.position = Vector3(184.0, 0.0, -54.0 + index * 22.0)
+		hut.position = Vector3(364.0, 0.0, -86.0 + index * 34.0)
 		hut.rotation_degrees.y = -8.0
 		scene.add_child(hut)
 
 static func _add_event_canopy(scene: Node3D):
 	var canopy = Node3D.new()
 	canopy.name = "EventCanopy"
-	canopy.position = Vector3(-54.0, 0.0, 166.0)
+	canopy.position = Vector3(-70.0, 0.0, 268.0)
 	canopy.add_child(_create_box("CanopyTop", Vector3(24.0, 0.5, 24.0), Vector3.ZERO + Vector3(0.0, 5.4, 0.0), CANOPY_BLUE))
 	canopy.add_child(_create_box("CanopyAccent", Vector3(6.0, 0.56, 24.2), Vector3(0.0, 5.42, 0.0), CANOPY_RED))
 
@@ -55,15 +55,15 @@ static func _add_event_canopy(scene: Node3D):
 
 static func _add_tree_lines(scene: Node3D):
 	for index in range(9):
-		scene.add_child(_create_tree("BackTree" + str(index + 1), Vector3(-135.0 + index * 34.0, 0.0, -156.0)))
+		scene.add_child(_create_tree("BackTree" + str(index + 1), Vector3(-190.0 + index * 48.0, 0.0, -250.0)))
 
 	for index in range(7):
-		scene.add_child(_create_tree("LeftTree" + str(index + 1), Vector3(-188.0, 0.0, -102.0 + index * 32.0)))
+		scene.add_child(_create_tree("LeftTree" + str(index + 1), Vector3(-286.0, 0.0, -160.0 + index * 50.0)))
 
 static func _add_distant_mountains(scene: Node3D):
 	var mountain_line = Node3D.new()
 	mountain_line.name = "DistantMountainLine"
-	mountain_line.position = Vector3(-78.0, 0.0, -183.0)
+	mountain_line.position = Vector3(-110.0, 0.0, -300.0)
 
 	for index in range(4):
 		var ridge = _create_box("MountainRidge" + str(index + 1), Vector3(56.0, 28.0, 8.0), Vector3(index * 42.0, 13.0, 0.0), HORIZON_COLOR)
@@ -75,7 +75,7 @@ static func _add_distant_mountains(scene: Node3D):
 static func _add_wind_turbines(scene: Node3D):
 	for index in range(3):
 		var turbine = _create_wind_turbine("WindTurbine" + str(index + 1))
-		turbine.position = Vector3(92.0 + index * 54.0, 0.0, -176.0 + index * 7.0)
+		turbine.position = Vector3(132.0 + index * 72.0, 0.0, -292.0 + index * 10.0)
 		scene.add_child(turbine)
 
 static func _create_hut(hut_name: String) -> Node3D:

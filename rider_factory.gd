@@ -17,7 +17,7 @@ static func populate(root: Node3D):
 
 	root.add_child(_create_board())
 	root.add_child(_create_body())
-	root.add_child(_create_rope_and_handle())
+	root.add_child(_create_handle())
 
 static func _create_board() -> Node3D:
 	var board = Node3D.new()
@@ -64,13 +64,10 @@ static func _add_arms(body: Node3D):
 	body.add_child(_create_limb("HandleArm", Vector3(0.38, 1.42, -0.32), Vector3(0.16, 0.72, 0.14), SHIRT_DARK, -38.0))
 	body.add_child(_create_limb("BalanceArm", Vector3(-0.46, 1.35, 0.16), Vector3(0.14, 0.72, 0.14), SHIRT_DARK, 52.0))
 
-static func _create_rope_and_handle() -> Node3D:
+static func _create_handle() -> Node3D:
 	var rig = Node3D.new()
-	rig.name = "HandleAndRope"
+	rig.name = "HandleRig"
 	rig.add_child(_create_box("Handle", Vector3(0.8, 0.08, 0.08), Vector3(0.55, 1.35, -0.62), Color(0.03, 0.03, 0.03)))
-	var rope = _create_limb("TowRope", Vector3(0.56, 4.9, -2.3), Vector3(0.035, 7.4, 0.035), ROPE_COLOR, -22.0)
-	rope.rotation_degrees.x = 18.0
-	rig.add_child(rope)
 	return rig
 
 static func _create_limb(limb_name: String, position: Vector3, size: Vector3, color: Color, z_rotation: float) -> MeshInstance3D:

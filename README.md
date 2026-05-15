@@ -2,7 +2,7 @@
 
 A small Godot 4 prototype for a cable wakeboarding game.
 
-The rider follows a full-size cable park path, the camera uses a third-person chase view and the current prototype supports jumping, simple trick inputs, obstacle interactions, scoring and crash resets.
+The rider follows a stretched full-size cable park path, the camera uses a third-person chase view and the current prototype supports jumping, simple trick inputs, obstacle interactions, scoring and crash resets.
 
 ## Project
 
