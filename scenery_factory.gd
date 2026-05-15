@@ -11,6 +11,9 @@ const HORIZON_COLOR = Color(0.38, 0.46, 0.36)
 const CANOPY_BLUE = Color(0.02, 0.13, 0.55)
 const CANOPY_RED = Color(0.88, 0.05, 0.04)
 const MIN_WATER_CLEARANCE = 75.0
+const COURSE_HALF_WIDTH = 55.0
+const COURSE_HALF_LENGTH = 155.0
+const MIN_STRUCTURE_DISTANCE_FROM_COURSE_CENTER = 80.0
 
 static func create_wakepark_scene(points: Array) -> Node3D:
 	var scene = Node3D.new()
@@ -38,12 +41,12 @@ static func _add_hut_row(scene: Node3D):
 		var hut = _create_hut("LakeHut" + str(index + 1))
 		hut.position = Vector3(364.0, 0.0, -86.0 + index * 34.0)
 		hut.rotation_degrees.y = -8.0
-		scene.add_child(hut)
+		_add_structure_on_land(scene, hut)
 
 static func _add_event_canopy(scene: Node3D):
 	var canopy = Node3D.new()
 	canopy.name = "EventCanopy"
-	canopy.position = Vector3(-70.0, 0.0, 268.0)
+	canopy.position = Vector3(-132.0, 0.0, 268.0)
 	canopy.add_child(_create_box("CanopyTop", Vector3(24.0, 0.5, 24.0), Vector3.ZERO + Vector3(0.0, 5.4, 0.0), CANOPY_BLUE))
 	canopy.add_child(_create_box("CanopyAccent", Vector3(6.0, 0.56, 24.2), Vector3(0.0, 5.42, 0.0), CANOPY_RED))
 
@@ -51,14 +54,22 @@ static func _add_event_canopy(scene: Node3D):
 		for z_offset in [-10.0, 10.0]:
 			canopy.add_child(_create_pole("CanopyPole", Vector3(x_offset, 2.6, z_offset), 5.2))
 
-	scene.add_child(canopy)
+	_add_structure_on_land(scene, canopy)
 
 static func _add_tree_lines(scene: Node3D):
 	for index in range(9):
-		scene.add_child(_create_tree("BackTree" + str(index + 1), Vector3(-190.0 + index * 48.0, 0.0, -250.0)))
+		_add_tree_on_land(scene, "BackTree" + str(index + 1), Vector3(-280.0 + index * 70.0, 0.0, -220.0))
 
 	for index in range(7):
-		scene.add_child(_create_tree("LeftTree" + str(index + 1), Vector3(-286.0, 0.0, -160.0 + index * 50.0)))
+		_add_tree_on_land(scene, "LeftTree" + str(index + 1), Vector3(-374.0, 0.0, -140.0 + index * 46.0))
+
+static func _add_tree_on_land(scene: Node3D, tree_name: String, position: Vector3):
+	if _is_inside_course_perimeter(position):
+		return
+	scene.add_child(_create_tree(tree_name, position))
+
+static func _is_inside_course_perimeter(position: Vector3) -> bool:
+	return abs(position.x) <= COURSE_HALF_WIDTH and abs(position.z) <= COURSE_HALF_LENGTH
 
 static func _add_distant_mountains(scene: Node3D):
 	var mountain_line = Node3D.new()
@@ -76,7 +87,18 @@ static func _add_wind_turbines(scene: Node3D):
 	for index in range(3):
 		var turbine = _create_wind_turbine("WindTurbine" + str(index + 1))
 		turbine.position = Vector3(132.0 + index * 72.0, 0.0, -292.0 + index * 10.0)
-		scene.add_child(turbine)
+		_add_structure_on_land(scene, turbine)
+
+static func _add_structure_on_land(scene: Node3D, structure: Node3D):
+	if not _is_outer_land_position(structure.position):
+		return
+	scene.add_child(structure)
+
+static func _is_outer_land_position(position: Vector3) -> bool:
+	return not _is_inside_course_perimeter(position) and _course_center_distance(position) >= MIN_STRUCTURE_DISTANCE_FROM_COURSE_CENTER
+
+static func _course_center_distance(position: Vector3) -> float:
+	return Vector2(position.x, position.z).length()
 
 static func _create_hut(hut_name: String) -> Node3D:
 	var hut = Node3D.new()
