@@ -21,9 +21,9 @@ static func create_wakepark_scene(points: Array) -> Node3D:
 	var center = _average_point(points)
 
 	scene.add_child(_create_box("OuterGround", Vector3(980.0, 0.08, 650.0), Vector3(0.0, -0.08, 0.0), DRY_GRASS_COLOR))
-	scene.add_child(_create_box("CentralIsland", Vector3(500.0, 0.24, 118.0), Vector3(12.0, 0.04, 8.0), GRASS_COLOR))
-	scene.add_child(_create_round_land_cap("IslandFrontCap", Vector3(262.0, 0.06, 8.0), 58.0))
-	scene.add_child(_create_round_land_cap("IslandBackCap", Vector3(-238.0, 0.06, 8.0), 58.0))
+	scene.add_child(_create_box("CentralIsland", Vector3(80.0, 0.24, 280.0), Vector3(0.0, 0.04, 0.0), GRASS_COLOR))
+	scene.add_child(_create_round_land_cap("IslandFrontCap", Vector3(0.0, 0.06, 140.0), 40.0))
+	scene.add_child(_create_round_land_cap("IslandBackCap", Vector3(0.0, 0.06, -140.0), 40.0))
 	scene.add_child(_create_shoreline_band("FrontSandBank", Vector3(680.0, 0.1, 22.0), Vector3(0.0, 0.02, 252.0)))
 	scene.add_child(_create_shoreline_band("BackSandBank", Vector3(700.0, 0.1, 22.0), Vector3(8.0, 0.02, -220.0)))
 	scene.add_child(_create_shoreline_band("RightServiceBank", Vector3(24.0, 0.1, 430.0), Vector3(356.0, 0.02, 8.0)))
