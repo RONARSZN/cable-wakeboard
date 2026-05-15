@@ -42,8 +42,9 @@ static func _create_body() -> Node3D:
 	body.add_child(_create_head())
 	_add_legs(body)
 	_add_arms(body)
-	body.rotation_degrees.x = -11.0
-	body.rotation_degrees.z = -8.0
+	body.rotation_degrees.x = 0.0
+	body.rotation_degrees.y = -82.0
+	body.rotation_degrees.z = 0.0
 	return body
 
 static func _create_head() -> MeshInstance3D:
@@ -55,14 +56,14 @@ static func _create_head() -> MeshInstance3D:
 	return head
 
 static func _add_legs(body: Node3D):
-	body.add_child(_create_limb("FrontLeg", Vector3(0.16, 0.55, -0.42), Vector3(0.18, 0.7, 0.16), SKIN, -14.0))
-	body.add_child(_create_limb("BackLeg", Vector3(-0.16, 0.55, 0.42), Vector3(0.18, 0.7, 0.16), SKIN, 14.0))
-	body.add_child(_create_box("FrontBoot", Vector3(0.34, 0.18, 0.28), Vector3(0.2, 0.28, -0.55), BOARD_WHITE))
-	body.add_child(_create_box("BackBoot", Vector3(0.34, 0.18, 0.28), Vector3(-0.2, 0.28, 0.55), BOARD_WHITE))
+	body.add_child(_create_limb("FrontLeg", Vector3(0.46, 0.55, -0.12), Vector3(0.18, 0.7, 0.16), SKIN, -16.0))
+	body.add_child(_create_limb("BackLeg", Vector3(-0.46, 0.55, 0.12), Vector3(0.18, 0.7, 0.16), SKIN, 16.0))
+	body.add_child(_create_box("FrontBoot", Vector3(0.34, 0.18, 0.28), Vector3(0.58, 0.28, -0.14), BOARD_WHITE))
+	body.add_child(_create_box("BackBoot", Vector3(0.34, 0.18, 0.28), Vector3(-0.58, 0.28, 0.14), BOARD_WHITE))
 
 static func _add_arms(body: Node3D):
-	body.add_child(_create_limb("HandleArm", Vector3(0.38, 1.42, -0.32), Vector3(0.16, 0.72, 0.14), SHIRT_DARK, -38.0))
-	body.add_child(_create_limb("BalanceArm", Vector3(-0.46, 1.35, 0.16), Vector3(0.14, 0.72, 0.14), SHIRT_DARK, 52.0))
+	body.add_child(_create_limb("HandleArm", Vector3(0.42, 1.45, -0.46), Vector3(0.16, 0.82, 0.14), SHIRT_DARK, -58.0))
+	body.add_child(_create_limb("BalanceArm", Vector3(0.12, 1.36, -0.58), Vector3(0.14, 0.74, 0.14), SHIRT_DARK, -42.0))
 
 static func _create_handle() -> Node3D:
 	var rig = Node3D.new()

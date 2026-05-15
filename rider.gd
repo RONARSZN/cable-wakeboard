@@ -37,6 +37,7 @@ var trick_rotation_axis = "y"
 var target_rotation = 0.0
 var current_rotation = 0.0
 var required_hold_time = 0.65
+var spin_90_hold_time = 0.2
 var spin_180_hold_time = 0.38
 var spin_360_hold_time = 0.85
 var trick_hold_time = 0.0
@@ -45,8 +46,8 @@ var active_trick_name = ""
 var active_trick_points = 0
 var target_rotation_amount = 0.0
 var active_spin_side = ""
-var base_stance_yaw = 90.0
-var stance_yaw = 90.0
+var base_stance_yaw = 0.0
+var stance_yaw = 0.0
 var visual_root: Node3D
 var grind_pose_timer = 0.0
 var grind_pose_duration = 1.0
@@ -83,6 +84,8 @@ func _process(delta):
 			vertical_offset = 0.0
 			jump_velocity = 0.0
 			is_jumping = false
+			if _is_perpendicular_to_path():
+				_crash_on_water_landing()
 			last_trick = ""
 			last_trick_points = 0
 			
@@ -198,6 +201,8 @@ func _update_obstacle_ride(delta: float):
 	if obstacle_ride_timer <= 0.0:
 		is_riding_obstacle = false
 		vertical_offset = 0.0
+		if _is_perpendicular_to_path():
+			_crash_on_water_landing()
 
 func _update_pose(delta: float):
 	if is_animating:
@@ -219,8 +224,8 @@ func _update_pose(delta: float):
 		_apply_ride_pose()
 
 func _apply_ride_pose():
-	visual_root.rotation_degrees = Vector3(-3.0, stance_yaw, 0.0)
-	_set_body_pose(-6.0, 0.0)
+	visual_root.rotation_degrees = Vector3(0.0, stance_yaw, 0.0)
+	_set_body_pose(0.0, 0.0)
 
 func _apply_edge_pose():
 	visual_root.rotation_degrees = Vector3(-7.0, stance_yaw, -13.0)
@@ -251,6 +256,32 @@ func _is_approaching_obstacle() -> bool:
 				return true
 	return false
 
+func _current_board_yaw() -> float:
+	var yaw = stance_yaw
+	if is_animating and trick_rotation_axis == "y":
+		yaw += current_rotation
+	return wrapf(yaw, 0.0, 360.0)
+
+func _is_perpendicular_to_path() -> bool:
+	var path_relative_yaw = fmod(_current_board_yaw(), 180.0)
+	return abs(path_relative_yaw - 90.0) <= 18.0
+
+func _crash_on_water_landing():
+	is_animating = false
+	is_jumping = false
+	is_riding_obstacle = false
+	current_rotation = 0.0
+	trick_hold_time = 0.0
+	active_trick_direction = ""
+	active_trick_name = ""
+	active_trick_points = 0
+	active_spin_side = ""
+	stance_yaw = base_stance_yaw
+	_apply_ride_pose()
+	var ui = get_node_or_null("/root/Main/UI")
+	if ui:
+		ui.crash()
+
 func _apply_trick_rotation(rotation_amount: float):
 	if trick_rotation_axis == "y":
 		visual_root.rotation_degrees.y = stance_yaw + rotation_amount
@@ -267,17 +298,25 @@ func _finish_trick_rotation(completed: bool):
 
 	is_animating = false
 	if completed:
+		var should_score = true
 		if active_spin_side != "":
-			var degrees = 360
-			if abs(current_rotation) < 300.0:
-				degrees = 180
-			_set_stance_yaw(degrees)
-			active_trick_name = _spin_name_for_degrees(active_spin_side, degrees)
-			active_trick_points = _spin_points_for_degrees(degrees)
-		last_trick = active_trick_name
-		last_trick_points = active_trick_points
-		var ui = get_node("/root/Main/UI")
-		ui.show_trick(last_trick, last_trick_points)
+			var degrees = _finished_spin_degrees()
+			var stance_degrees = degrees
+			if degrees == 90 and active_spin_side == "left":
+				stance_degrees = -90
+			if degrees == 180:
+				stance_degrees = 180
+			_set_stance_yaw(stance_degrees)
+			if degrees == 90:
+				should_score = false
+			else:
+				active_trick_name = _spin_name_for_degrees(active_spin_side, degrees)
+				active_trick_points = _spin_points_for_degrees(degrees)
+		if should_score:
+			last_trick = active_trick_name
+			last_trick_points = active_trick_points
+			var ui = get_node("/root/Main/UI")
+			ui.show_trick(last_trick, last_trick_points)
 	else:
 		_show_obstacle_message("Underrotated", 0)
 
@@ -288,6 +327,14 @@ func _finish_trick_rotation(completed: bool):
 	active_trick_points = 0
 	active_spin_side = ""
 	_clear_trick_rotation()
+
+func _finished_spin_degrees() -> int:
+	var finished_degrees = abs(current_rotation)
+	if finished_degrees >= 300.0:
+		return 360
+	if finished_degrees >= 140.0:
+		return 180
+	return 90
 
 func _release_trick_key(direction: String):
 	if is_animating and active_trick_direction == direction:
@@ -318,6 +365,8 @@ func _finish_spin_key(side: String):
 		_finish_trick_rotation(true)
 	elif finished_degrees >= 140.0 and trick_hold_time >= spin_180_hold_time:
 		_finish_trick_rotation(true)
+	elif finished_degrees >= 70.0 and trick_hold_time >= spin_90_hold_time:
+		_finish_trick_rotation(true)
 	else:
 		_finish_trick_rotation(false)
 
@@ -329,10 +378,14 @@ func _spin_name_for_degrees(side: String, degrees: int) -> String:
 func _spin_points_for_degrees(degrees: int) -> int:
 	if degrees >= 360:
 		return 500
-	return 100
+	if degrees >= 180:
+		return 100
+	return 0
 
 func _set_stance_yaw(degrees: int):
-	if degrees == 180:
+	if abs(degrees) == 90:
+		stance_yaw = wrapf(stance_yaw + degrees, 0.0, 360.0)
+	elif degrees == 180:
 		stance_yaw = wrapf(stance_yaw + 180.0, 0.0, 360.0)
 	elif degrees >= 360:
 		stance_yaw = base_stance_yaw
@@ -428,4 +481,3 @@ func _input(event):
 		else:
 			var swipe = event.position - swipe_start
 			detect_trick(swipe)
-				 

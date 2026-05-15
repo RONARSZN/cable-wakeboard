@@ -30,7 +30,7 @@ The rider follows a stretched full-size cable park path, the camera uses a third
 - Hold `Up Arrow`: backroll while jumping
 - Hold `Down Arrow`: front roll while jumping
 
-Left and right spin keys use hold duration. Release after enough rotation for a 180, or keep holding for a full 360. Spin and flip keys must be held long enough. Releasing too early under-rotates the trick.
+Left and right spin keys use hold duration. Release early around 90 degrees to turn the board sideways while airborne or on obstacles. Release after enough rotation for a 180, or keep holding for a full 360. Spin and flip keys must be held long enough. Only 180 and 360 spins score. Landing sideways on water crashes.
 
 On touch screens, tap to jump and swipe to trigger a trick.
 
