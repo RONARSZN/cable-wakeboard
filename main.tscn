@@ -71,3 +71,5 @@ text = "Score 0"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1645808874]
 environment = SubResource("Environment_7mycd")
+
+[node name="Obstacles" type="Node3D" parent="." unique_id=1007632403]

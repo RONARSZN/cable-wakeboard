@@ -1,6 +1,7 @@
 extends Path3D
 
 const SceneryFactoryScript = preload("res://scenery_factory.gd")
+const ObstacleSpawnerScript = preload("res://obstacle_spawner.gd")
 
 func _ready():
 	var new_curve = Curve3D.new()
@@ -31,6 +32,7 @@ func _ready():
 	_add_scenery(points)
 	_add_environment(points)
 	_add_air_trick_markers()
+	call_deferred("_add_obstacles")
 
 func _add_scenery(points: Array):
 	get_parent().call_deferred("add_child", SceneryFactoryScript.create_wakepark_scene(points))
@@ -108,3 +110,6 @@ func _add_air_trick_markers():
 		marker_parent.add_child(marker)
 
 	get_parent().call_deferred("add_child", marker_parent)
+
+func _add_obstacles():
+	ObstacleSpawnerScript.place_obstacle("table_long", ObstacleSpawnerScript.TOP_3)
