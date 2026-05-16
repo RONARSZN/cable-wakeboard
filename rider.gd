@@ -264,7 +264,7 @@ func _current_board_yaw() -> float:
 
 func _is_perpendicular_to_path() -> bool:
 	var path_relative_yaw = fmod(_current_board_yaw(), 180.0)
-	return abs(path_relative_yaw - 90.0) <= 18.0
+	return abs(path_relative_yaw - 90.0) <= 15.0
 
 func _crash_on_water_landing():
 	is_animating = false
